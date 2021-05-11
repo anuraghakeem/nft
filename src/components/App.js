@@ -41,6 +41,7 @@ class App extends Component {
       // Load Colors
       for (var i = 1; i <= totalSupply; i++) {
         const color = await contract.methods.colors(i - 1).call()
+        console.log("color",color)
         this.setState({
           colors: [...this.state.colors, color]
         })
@@ -50,8 +51,8 @@ class App extends Component {
     }
   }
 
-  mint = (color) => {
-    this.state.contract.methods.mint(color).send({ from: this.state.account })
+  mint = (color, dose) => {
+    this.state.contract.methods.mint(color, dose).send({ from: this.state.account })
     .once('receipt', (receipt) => {
       this.setState({
         colors: [...this.state.colors, color]
@@ -95,13 +96,20 @@ class App extends Component {
                 <form onSubmit={(event) => {
                   event.preventDefault()
                   const color = this.color.value
-                  this.mint(color)
+                  const dose = this.dose.value
+                  this.mint(color,dose)
                 }}>
                   <input
                     type='text'
                     className='form-control mb-1'
                     placeholder='e.g. #FFFFFF'
                     ref={(input) => { this.color = input }}
+                  />
+                  <input
+                    type='text'
+                    className='form-control mb-1'
+                    placeholder='e.g.1'
+                    ref={(input) => { this.dose = input }}
                   />
                   <input
                     type='submit'
